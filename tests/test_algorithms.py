@@ -88,4 +88,8 @@ def test_memory_efficiency(implementations):
         
         # Check that memory usage is reasonable (less than 10x input size)
         expected_memory = a.nbytes + b.nbytes
-        assert memory < expected_memory * 10, f"High memory usage in {impl.__class__.__name__}" 
+        assert memory < expected_memory * 10, f"High memory usage in {impl.__class__.__name__}"
+
+
+def func():
+    return 2488
