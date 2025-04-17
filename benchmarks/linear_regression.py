@@ -12,7 +12,7 @@ from src.linear_regression import (
     ParallelGradientDescentRegression,
     SklearnWrapper
 )
-from src.utils import DataGenerator, MemoryTracker, compute_metrics
+from src.utils import DataGenerator, compute_metrics
 from .config import BenchmarkConfig
 
 class LinearRegressionBenchmark:
@@ -54,29 +54,24 @@ class LinearRegressionBenchmark:
         
         times_fit = []
         times_predict = []
-        memory_usage = []
         scores = []
         
         for i in range(self.config.n_runs):
-            tracker = MemoryTracker()
+            # Measure fit time
+            start_time = time.perf_counter()
+            implementation.fit(X_train, y_train)
+            fit_time = time.perf_counter() - start_time
             
-            with tracker.track() as memory:
-                # Measure fit time
-                start_time = time.perf_counter()
-                implementation.fit(X_train, y_train)
-                fit_time = time.perf_counter() - start_time
-                
-                # Measure predict time
-                start_time = time.perf_counter()
-                y_pred = implementation.predict(X_test)
-                predict_time = time.perf_counter() - start_time
-                
-                # Calculate score
-                score = implementation.score(X_test, y_test)
+            # Measure predict time
+            start_time = time.perf_counter()
+            y_pred = implementation.predict(X_test)
+            predict_time = time.perf_counter() - start_time
+            
+            # Calculate score
+            score = implementation.score(X_test, y_test)
             
             times_fit.append(fit_time)
             times_predict.append(predict_time)
-            memory_usage.append(memory)
             scores.append(score)
             
         return {
@@ -87,8 +82,6 @@ class LinearRegressionBenchmark:
             'std_fit_time': np.std(times_fit),
             'mean_predict_time': np.mean(times_predict),
             'std_predict_time': np.std(times_predict),
-            'mean_memory': np.mean(memory_usage),
-            'std_memory': np.std(memory_usage),
             'mean_score': np.mean(scores),
             'std_score': np.std(scores),
             'n_runs': self.config.n_runs

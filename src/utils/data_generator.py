@@ -4,53 +4,28 @@ from sklearn.datasets import make_regression
 from sklearn.model_selection import train_test_split
 
 class DataGenerator:
-    """Class for generating synthetic datasets"""
+    """Class for generating test data"""
     
     @staticmethod
-    def generate_arrays(size: int, seed: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
-        """Generate random arrays for basic operations"""
-        if seed is not None:
-            np.random.seed(seed)
-        return np.random.random(size), np.random.random(size)
-
+    def generate_arrays(size: int, random_seed: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
+        """Generate two random arrays for testing"""
+        if random_seed is not None:
+            np.random.seed(random_seed)
+        return np.random.rand(size), np.random.rand(size)
+    
     @staticmethod
-    def generate_regression_data(
-        n_samples: int,
-        n_features: int,
-        noise: float = 0.1,
-        test_size: float = 0.2,
-        random_state: Optional[int] = None
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """
-        Generate synthetic regression dataset
-        
-        Parameters:
-        -----------
-        n_samples : int
-            Number of samples
-        n_features : int
-            Number of features
-        noise : float
-            Noise level
-        test_size : float
-            Proportion of test set
-        random_state : int, optional
-            Random seed
+    def generate_regression_data(n_samples: int, 
+                               n_features: int,
+                               test_size: float = 0.2,
+                               random_state: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        """Generate regression dataset"""
+        if random_state is not None:
+            np.random.seed(random_state)
             
-        Returns:
-        --------
-        X_train, X_test, y_train, y_test : np.ndarray
-            Training and test sets
-        """
-        # Generate regression dataset
-        X, y = make_regression(
-            n_samples=n_samples,
-            n_features=n_features,
-            noise=noise,
-            random_state=random_state
-        )
+        X = np.random.randn(n_samples, n_features)
+        true_coefficients = np.random.randn(n_features)
+        y = np.dot(X, true_coefficients) + np.random.randn(n_samples) * 0.1
         
-        # Split into train and test sets
         return train_test_split(X, y, test_size=test_size, random_state=random_state)
 
     @staticmethod

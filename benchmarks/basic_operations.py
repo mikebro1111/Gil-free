@@ -13,7 +13,7 @@ from src.algorithms import (
     MultiprocessingCalculator,
     MultithreadingCalculator
 )
-from src.utils import DataGenerator, MemoryTracker
+from src.utils import DataGenerator
 from .config import BenchmarkConfig
 
 class BasicOperationsBenchmark:
@@ -45,18 +45,12 @@ class BasicOperationsBenchmark:
         a, b = DataGenerator.generate_arrays(size, self.config.random_seed)
         
         times = []
-        memory_usage = []
         
         for i in range(self.config.n_runs):
-            tracker = MemoryTracker()
-            
-            with tracker.track() as memory:
-                start_time = time.perf_counter()
-                _ = implementation.calculate(a, b)
-                end_time = time.perf_counter()
-                
+            start_time = time.perf_counter()
+            _ = implementation.calculate(a, b)
+            end_time = time.perf_counter()
             times.append(end_time - start_time)
-            memory_usage.append(memory)
             
         return {
             'implementation': implementation_name,
@@ -65,8 +59,6 @@ class BasicOperationsBenchmark:
             'std_time': np.std(times),
             'min_time': np.min(times),
             'max_time': np.max(times),
-            'mean_memory': np.mean(memory_usage),
-            'std_memory': np.std(memory_usage),
             'n_runs': self.config.n_runs
         }
     
