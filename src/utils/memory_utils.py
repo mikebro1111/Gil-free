@@ -22,13 +22,20 @@ class MemoryTracker:
         
     def start(self):
         """Start tracking memory"""
-        self.start_memory = self.process.memory_info().rss
+        try:
+            self.start_memory = self.process.memory_info().rss
+        except (AttributeError, psutil.AccessDenied):
+            # Fallback for platforms where RSS is not available
+            self.start_memory = psutil.virtual_memory().used
         
     def end(self) -> int:
         """End tracking and return memory difference in bytes"""
         if self.start_memory is None:
             raise RuntimeError("Memory tracking not started")
-        end_memory = self.process.memory_info().rss
+        try:
+            end_memory = self.process.memory_info().rss
+        except (AttributeError, psutil.AccessDenied):
+            end_memory = psutil.virtual_memory().used
         return end_memory - self.start_memory
 
     @contextmanager

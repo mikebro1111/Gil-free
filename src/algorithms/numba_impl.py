@@ -9,7 +9,7 @@ class NumbaCalculator(BaseCalculator):
         self._compiled = False
         
     @staticmethod
-    @jit(nopython=True, parallel=True, cache=True)
+    @jit(nopython=True, cache=True)
     def _numba_calc(a: np.ndarray, b: np.ndarray) -> np.ndarray:
         result = np.zeros_like(a)
         for i in range(len(a)):
